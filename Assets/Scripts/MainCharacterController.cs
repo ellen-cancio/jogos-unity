@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
         anim.SetBool("isrunning", Mathf.Abs(moveInput) > 0f && isGrounded);
+        anim.SetBool("isjumping", Mathf.Abs(rb.linearVelocity.y) > 0f && !isGrounded);
         if (moveInput > 0.01f)
         {
             visual.localScale = new Vector3(4, 4, 4);
