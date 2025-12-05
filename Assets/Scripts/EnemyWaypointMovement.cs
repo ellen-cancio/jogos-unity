@@ -121,14 +121,14 @@ public class EnemyWaypointMovement : MonoBehaviour
         if (Time.time >= lastAttackTime + attackCooldown)
         {
             // PROCURA PELO MainCharacterController
-            MainCharacterController controller = player.GetComponent<MainCharacterController>();
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
 
-            if (controller != null)
+            if (playerHealth != null)
             {
                 Vector2 knockbackDirection = (player.transform.position - transform.position).normalized;
 
                 // Chama o TakeDamage no MainCharacterController
-                controller.TakeDamage(damage, knockbackDirection, knockbackForce);
+                playerHealth.TakeDamage(damage, knockbackDirection, knockbackForce);
 
                 lastAttackTime = Time.time;
             }

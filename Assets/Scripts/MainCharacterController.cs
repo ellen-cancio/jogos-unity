@@ -74,30 +74,4 @@ public class MainCharacterController : MonoBehaviour
         }
     }
 
-    // --- LÓGICA DE VIDA E DANO ---
-    // Este método é chamado pelo Inimigo
-    public void TakeDamage(float damage, Vector2 knockbackDirection, float knockbackForce = 10f)
-    {
-        currentHealth -= damage;
-        Debug.Log("Player levou dano! Vida atual: " + currentHealth);
-
-        // Aplica knockback (Empurrão)
-        if (rb != null)
-        {
-            // Zera a velocidade atual para o impacto ser seco
-            rb.linearVelocity = Vector2.zero;
-            rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
-        }
-
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-    }
-
-    void Die()
-    {
-        Debug.Log("Player morreu!");
-        gameObject.SetActive(false); // Desativa o player da cena
-    }
 }
