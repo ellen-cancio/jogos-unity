@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
     public float currentHealth;
 
     // Componentes Públicos e Privados
-    public HealthBar healthBar; // Referência para a UI da barra de vida (opcional)
+    public HealthBar healthBar;
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -15,16 +15,19 @@ public class PlayerHealth : MonoBehaviour
     // Referência específica para o script de movimento do jogador
     private MainCharacterController playerMovementScript;
 
-    void Start()
+    // Usamos Awake() para garantir que a saúde seja inicializada antes de qualquer Start()
+    void Awake()
     {
         currentHealth = maxHealth;
+    }
 
+    void Start()
+    {
         // Obtendo os componentes
+        // Se o script estiver no objeto filho (Visual), use GetComponentInParent<>
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-
+        anim = GetComponentInChildren<Animator>();
         // Obtendo o script de controle de movimento
-        // ATENÇÃO: MainCharacterController deve ser o nome exato do seu script de movimento!
         playerMovementScript = GetComponent<MainCharacterController>();
     }
 
@@ -37,8 +40,8 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0) return;
 
         currentHealth -= damage;
-        Debug.Log("Player levou dano! Vida atual: " + currentHealth);
-
+        // 🛑 Adicione este log para ver o dano inicial
+        Debug.Log("DANO RECEBIDO! Valor: " + damage + ". Nova Vida: " + currentHealth);
         // Aplica knockback
         if (rb != null)
         {
@@ -65,26 +68,23 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("Player morreu! Acionando animação e parando movimento.");
 
-        // 1. Aciona a animação de morte via Trigger no Animator
-        if (anim != null)
-        {
-            anim.SetTrigger("Morrer");
-        }
-
-        // 2. Desativa o script de controle para PARAR o personagem
+        // 1. Desativação IMEDIATA do script de controle
         if (playerMovementScript != null)
         {
             playerMovementScript.enabled = false;
         }
 
-        // 3. Para qualquer movimento físico restante (Correção de Obsoleto)
-        if (rb != null)
+        // 2. Aciona a animação de morte via Trigger
+        if (anim != null)
         {
-            rb.linearVelocity = Vector2.zero; // ✅ CORRIGIDO: Usa linearVelocity
+            anim.SetTrigger("Morrer");
         }
 
-        // Opcional: Desabilita o colisor
-        // GetComponent<Collider2D>().enabled = false;
+        // 3. Para qualquer movimento físico restante (usando linearVelocity)
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
     }
 
     /// <summary>
@@ -96,8 +96,5 @@ public class PlayerHealth : MonoBehaviour
 
         // Destrói o objeto do personagem, finalizando o ciclo de vida
         Destroy(gameObject);
-
-        // Adicione aqui a lógica de fim de jogo (Exemplo:
-        // GameManager.Instance.LoadGameOverScene();
     }
 }
